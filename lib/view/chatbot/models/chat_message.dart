@@ -1,3 +1,4 @@
+//Contributed by: [Tok Saw Ping]
 class ChatMessage {
   final String text;
   final bool isUser;
