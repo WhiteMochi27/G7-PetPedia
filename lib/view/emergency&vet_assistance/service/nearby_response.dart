@@ -1,3 +1,4 @@
+//Contributed by: Alicia Chua Xiu Wen
 class NearbyPlacesResponse {
   List<Results>? results;
   String? status;
