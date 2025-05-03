@@ -1,3 +1,5 @@
+// Contributed by: Tong Qian Ru
+
 import 'package:flutter/material.dart';
 import 'package:petpedia/common_widget/home_button.dart';
 import 'package:petpedia/common_widget/page_title.dart';
@@ -8,7 +10,6 @@ import 'package:petpedia/services/auth_service.dart';
 import 'package:petpedia/models/user_model.dart';
 import 'package:petpedia/database/database_handler.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:petpedia/providers/user_provider.dart';
 
@@ -31,7 +32,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
   final DatabaseHandler _dbHandler = DatabaseHandler();
   late User _currentUser;
 
-  bool _isUserDataLoaded = false;
 
   // Controllers for edit mode
   late TextEditingController _usernameController;
@@ -71,12 +71,10 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
         // We'll just use 'general' for the main notification toggle
         _notificationsEnabled = notificationSettings['general'] ?? true;
         // Mark user data as loaded
-        _isUserDataLoaded = true;
       });
     } else {
       // If there's no user ID, set the flag to prevent loading
       setState(() {
-        _isUserDataLoaded = false;
       });
     }
   }
