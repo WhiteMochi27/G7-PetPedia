@@ -36,7 +36,6 @@ class _EditViewState extends State<EditView> {
     _editedPet = Map.from(widget.pet);
     _neutered = widget.pet['neutered'] == 'Yes';
 
-    // Load date of birth
     if (widget.pet['dob'] != null) {
       DateTime? parsedDate = _db.parseDbDate(widget.pet['dob']);
       if (parsedDate != null) {
@@ -44,7 +43,6 @@ class _EditViewState extends State<EditView> {
       }
     }
 
-    // Load weight
     if (widget.pet['weight'] != null) {
       _weight =
           widget.pet['weight'] is double
@@ -52,11 +50,9 @@ class _EditViewState extends State<EditView> {
               : double.tryParse(widget.pet['weight'].toString()) ?? _weight;
     }
 
-    // Load characteristics
     _loadCharacteristics();
   }
 
-  // Load characteristics from database
   Future<void> _loadCharacteristics() async {
     setState(() {
       _isLoading = true;
@@ -185,7 +181,6 @@ class _EditViewState extends State<EditView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Back Button
                         IconButton(
                           icon: Image.asset('assets/images/icon_back.png'),
                           onPressed: () => Navigator.pop(context),
@@ -424,7 +419,7 @@ class _EditViewState extends State<EditView> {
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
-              ), // Increased padding here
+              ), 
               decoration: BoxDecoration(
                 color: const Color(0xFFFFFCE7).withOpacity(0.7),
                 borderRadius: BorderRadius.circular(20),

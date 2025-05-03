@@ -112,7 +112,6 @@ class _AddPetViewState extends State<AddPetView> {
   }
 
   Future<void> _savePet() async {
-    // Validate required fields
     if (_nameController.text.isEmpty || _breedController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter name and breed')),
@@ -120,11 +119,9 @@ class _AddPetViewState extends State<AddPetView> {
       return;
     }
 
-    // Get the current logged-in user
     final currentUser = await _db.getRememberedUser();
     final userId = currentUser != null ? currentUser['id'] : 1;
 
-    // Build pet data for database
     final Map<String, dynamic> petData = {
       'name': _nameController.text,
       'breed': _breedController.text, 
@@ -137,25 +134,20 @@ class _AddPetViewState extends State<AddPetView> {
       'user_id': userId,
     };
 
-    // Add optional fields
     if (_weightController.text.isNotEmpty) {
       petData['weight'] = double.tryParse(_weightController.text) ?? 0.0;
     }
 
     petData['dob'] = _db.formatDateForDb(_dateOfBirth);
 
-    // Handle avatar image path
     if (_profileImage != null) {
       petData['avatar_url'] = _profileImage!.path;
     } else {
       petData['avatar_url'] = 'assets/images/Pet profile pic/default.png';
     }
 
-    // Save to database
     final petId = await _db.insertPetProfile(petData);
-    // Return pet info to previous screen
     if (mounted) {
-      // Create pet object for UI display
       final newPet = {
         'name': _nameController.text,
         'breed': _breedController.text,
@@ -187,14 +179,12 @@ class _AddPetViewState extends State<AddPetView> {
         ),
         child: Stack(
           children: [
-            // Header
             const PageTitle(
               icon: 'assets/images/icon_fursona.png',
               title: 'Fursona',
               subtitle: 'Add Pet',
             ),
 
-            // Main Content
             Positioned.fill(
               top: 100,
               child: SingleChildScrollView(
@@ -202,7 +192,6 @@ class _AddPetViewState extends State<AddPetView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Profile Image
                     Center(
                       child: GestureDetector(
                         onTap: _showImageSourceSelector,
@@ -310,7 +299,6 @@ class _AddPetViewState extends State<AddPetView> {
                       ),
                     ),
 
-                    // Neutered Toggle
                     _buildLabelText('Neutered'),
                     Container(
                       margin: const EdgeInsets.only(bottom: 16),

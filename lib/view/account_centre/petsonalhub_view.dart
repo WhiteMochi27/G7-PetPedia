@@ -33,7 +33,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
   late User _currentUser;
 
 
-  // Controllers for edit mode
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
   late TextEditingController _oldPasswordController;
@@ -52,18 +51,15 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
     _newPasswordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
 
-    // If user already has an avatar path, use it
     if (_currentUser.avatarPath != null) {
       _imageFile = File(_currentUser.avatarPath!);
     } else {
-      // Otherwise load from database
       _loadUserAvatar();
     }
   }
 
   Future<void> _loadUserSettings() async {
     if (_currentUser.id != null) {
-      // Get notification settings
       Map<String, bool> notificationSettings = await _dbHandler
           .getNotificationSettings(_currentUser.id!);
 
@@ -88,12 +84,10 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
           setState(() {
             _imageFile = avatarFile;
 
-            // Update the current user with the avatar path
             _currentUser = _currentUser.copyWith(
               avatarPath: settings['avatar_path'],
             );
 
-            // Update UserProvider
             Provider.of<UserProvider>(
               context,
               listen: false,
@@ -118,7 +112,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Get the current user from provider to ensure we have the latest
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     if (userProvider.currentUser != null &&
         userProvider.currentUser!.id != null) {
@@ -147,13 +140,11 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
             _loadUserAvatar();
           });
         } else {
-          // If there's no valid user, navigate to login
           Navigator.pushReplacementNamed(context, '/login');
           return;
         }
       });
 
-      // Show loading indicator while checking
       return Scaffold(
         body: Container(
           decoration: const BoxDecoration(
@@ -180,17 +171,15 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
         child: SafeArea(
           child: Stack(
             children: [
-              // Header
               const PageTitle(
                 icon: 'assets/images/icon_petsonalhub.png',
                 title: 'Petsonal Hub',
                 subtitle: 'Account Center',
               ),
 
-              // Main Content Container to ensure all content is visible
               Positioned.fill(
                 top: 100,
-                bottom: 70, // Ensure there's space for the home button
+                bottom: 70, 
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                   child: Column(
@@ -206,7 +195,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
 
                       const SizedBox(height: 30),
 
-                      // Delete Account Button
                       GestureDetector(
                         onTapDown:
                             (_) => setState(() => _isRemovePressed = true),
@@ -216,7 +204,7 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
                             () => setState(() => _isRemovePressed = false),
                         onTap: () => _showDeleteConfirmation(context),
                         child: Container(
-                          width: screenWidth * 0.8, // 80% of screen width
+                          width: screenWidth * 0.8, 
                           margin: const EdgeInsets.only(bottom: 20),
                           child: Stack(
                             alignment: Alignment.center,
@@ -290,7 +278,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
               ),
             ),
 
-            // Change Avatar Button (only in edit mode)
             if (_isEditing)
               Positioned(
                 bottom: 0,
@@ -405,7 +392,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
             ],
           ),
 
-        // Notification Toggle
         _buildNotificationRow(),
       ],
     );
@@ -456,7 +442,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
                         ),
                       )
                       : Text(
-                        // Show masked text for password
                         isPassword ? 'xxxxxxxxx' : value,
                         style: const TextStyle(
                           fontFamily: 'ComicNeue',
@@ -534,7 +519,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
         });
       }
     } catch (e) {
-      // Show error dialog or message
       print("Error picking image: $e");
       ScaffoldMessenger.of(
         context,
@@ -549,7 +533,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
   void _cancelEditing() {
     setState(() {
       _isEditing = false;
-      // Reset controller values to original data
       _usernameController.text = _currentUser.name;
       _emailController.text = _currentUser.email;
       _oldPasswordController.clear();
@@ -561,7 +544,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
   }
 
   Future<void> _saveChanges() async {
-    // Validate form inputs
     if (_usernameController.text.isEmpty || _emailController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Username and email cannot be empty')),
@@ -569,14 +551,12 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
       return;
     }
 
-    // Check if trying to change password
     bool isChangingPassword =
         _oldPasswordController.text.isNotEmpty &&
         _newPasswordController.text.isNotEmpty &&
         _confirmPasswordController.text.isNotEmpty;
 
     if (isChangingPassword) {
-      // Validate new passwords match
       if (_newPasswordController.text != _confirmPasswordController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('New passwords do not match')),
@@ -584,7 +564,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
         return;
       }
 
-      // Verify old password
       final authResult = await _authService.loginUser(
         email: _currentUser.email,
         password: _oldPasswordController.text,
@@ -597,14 +576,12 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
         return;
       }
 
-      // Update password
       await _authService.resetPassword(
         email: _currentUser.email,
         newPassword: _newPasswordController.text,
       );
     }
 
-    // Update user name (if changed)
     if (_usernameController.text != _currentUser.name ||
         _emailController.text != _currentUser.email) {
       if (_emailController.text != _currentUser.email) {
@@ -621,7 +598,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
         }
       }
 
-      // Update user data in database
       await _dbHandler.insertUser({
         'id': _currentUser.id,
         'name': _usernameController.text,
@@ -640,20 +616,16 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
 
     String? updatedAvatarPath = _currentUser.avatarPath;
 
-    // Save profile picture if changed
     if (_imageFile != null && _currentUser.id != null) {
       final appDir = await getApplicationDocumentsDirectory();
       final fileName = 'user_${_currentUser.id}_avatar.jpg';
       final savedImage = await _imageFile!.copy('${appDir.path}/$fileName');
 
-      // Update avatar path in database
       await _dbHandler.updateUserAvatar(_currentUser.id!, savedImage.path);
 
-      // Update avatar path for user model
       updatedAvatarPath = savedImage.path;
     }
 
-    // Update notification settings
     if (_currentUser.id != null) {
       await _dbHandler.updateNotificationSettings(
         _currentUser.id!,
@@ -662,22 +634,18 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
       );
     }
 
-    // Update local user object with avatar path and notification settings
     _currentUser = _currentUser.copyWith(
       avatarPath: updatedAvatarPath,
       notificationsEnabled: _notificationsEnabled,
     );
 
-    // Update the UserProvider with the updated user
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.setUser(_currentUser);
 
-    // Update local state
     setState(() {
       _isEditing = false;
     });
 
-    // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Account information updated successfully!'),
@@ -715,7 +683,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
             ),
             TextButton(
               onPressed: () async {
-                // Delete user from database
                 if (_currentUser.id != null) {
                   final db = await _dbHandler.database;
 
@@ -725,20 +692,17 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
                     whereArgs: [_currentUser.id],
                   );
 
-                  // Delete user
                   await db.delete(
                     'users',
                     where: 'id = ?',
                     whereArgs: [_currentUser.id],
                   );
 
-                  // Delete avatar file if exists
                   if (_imageFile != null && await _imageFile!.exists()) {
                     await _imageFile!.delete();
                   }
                 }
 
-                // Navigate to splash screen after confirming deletion
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const SplashScreen()),
                   (route) => false,

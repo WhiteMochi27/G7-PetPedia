@@ -167,7 +167,6 @@ class _PawChievementViewState extends State<PawChievementView> {
         ),
         child: Stack(
           children: [
-            // Header
             const PageTitle(
               icon: 'assets/images/icon_achievement.png',
               title: 'PawChievement',

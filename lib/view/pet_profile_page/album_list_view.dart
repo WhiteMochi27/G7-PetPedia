@@ -99,7 +99,6 @@ class _AlbumListViewState extends State<AlbumListView> {
           (album) => album.name == "All photos",
         );
 
-        // Save each image to database
         for (var image in images) {
           final imageData = {
             'album_id': albumId,
@@ -224,7 +223,6 @@ class _AlbumListViewState extends State<AlbumListView> {
         ),
         child: Stack(
           children: [
-            // Header
             const PageTitle(
               icon: 'assets/images/icon_album.png',
               title: 'SnapPaws',
@@ -242,7 +240,6 @@ class _AlbumListViewState extends State<AlbumListView> {
               ),
             ),
 
-            // Content area
             Positioned.fill(
               top: 100,
               child: Column(
@@ -461,7 +458,6 @@ class _AlbumListViewState extends State<AlbumListView> {
                 onPressed: () async {
                   if (controller.text.isNotEmpty) {
                     try {
-                      // Save album to database
                       DatabaseHandler db = DatabaseHandler();
                       final albumData = {
                         'pet_id': widget.petId,

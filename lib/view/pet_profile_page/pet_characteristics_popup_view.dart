@@ -226,26 +226,23 @@ class _PetCharacteristicsPopupState extends State<PetCharacteristicsPopup> {
     if (widget.petId == null) return;
     
     try {
-      // Get existing characteristics to compare
       final existingCharacteristics = await _db.getCharacteristicsForPet(widget.petId!);
       final existingNames = existingCharacteristics
           .map<String>((char) => char['name'] as String)
           .toList();
       
-      // Find characteristics to delete (in existing but not in selected)
       for (final existing in existingCharacteristics) {
         if (!_selectedCharacteristics.contains(existing['name'])) {
           await _db.deleteCharacteristic(existing['char_id']);
         }
       }
       
-      // Add new characteristics (in selected but not in existing)
       for (final selected in _selectedCharacteristics) {
         if (!existingNames.contains(selected)) {
           await _db.insertCharacteristic({
             'pet_id': widget.petId,
             'name': selected,
-            'percentage': 0.5, // Default value
+            'percentage': 0.5, 
           });
         }
       }
