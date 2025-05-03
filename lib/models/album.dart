@@ -1,3 +1,5 @@
+// Contributed by: Tong Qian Ru
+
 import 'package:petpedia/models/photo.dart';
 
 class Album {

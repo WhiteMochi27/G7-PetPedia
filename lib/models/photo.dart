@@ -1,3 +1,5 @@
+// Contributed by: Tong Qian Ru
+
 class Photo {
   final int id;
   final DateTime date;

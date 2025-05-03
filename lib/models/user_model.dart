@@ -1,3 +1,5 @@
+// Contributed by: Davin Cheong, Tong Qian Ru
+
 class User {
   final int? id;
   final String name;
