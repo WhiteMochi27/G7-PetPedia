@@ -17,7 +17,6 @@ class PawChievementView extends StatefulWidget {
 }
 
 class _PawChievementViewState extends State<PawChievementView> {
-  // Current page for achievements pagination
   int currentPage = 0;
   List<Map<String, dynamic>> achievements = [];
   bool isLoading = true;
@@ -36,10 +35,8 @@ class _PawChievementViewState extends State<PawChievementView> {
     });
 
     try {
-      // Load pet profile data
       final pet = await _db.getPetProfileById(widget.petId);
 
-      // Load pet achievements
       final achievementList = await _db.getAchievementsForPet(widget.petId);
 
       setState(() {
@@ -78,10 +75,8 @@ class _PawChievementViewState extends State<PawChievementView> {
 
       await _db.insertAchievement(achievement);
 
-      // Reload achievements
       await _loadPetAndAchievements();
 
-      // Reset to first page if adding a new achievement
       if (currentPage != 0) {
         setState(() {
           currentPage = 0;
@@ -113,7 +108,6 @@ class _PawChievementViewState extends State<PawChievementView> {
       );
     }
 
-    // If pet not found
     if (petData == null) {
       return Scaffold(
         appBar: null,
@@ -163,7 +157,7 @@ class _PawChievementViewState extends State<PawChievementView> {
     int currentLevelAchievements = totalAchievements % 10;
 
     return Scaffold(
-      appBar: null, // Remove default app bar
+      appBar: null,
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -192,19 +186,15 @@ class _PawChievementViewState extends State<PawChievementView> {
               top: 100,
               child: Column(
                 children: [
-                  // Pet profile section
                   _buildProfileSection(),
 
-                  // Paw level progress bar
                   _buildPawLevelBar(pawLevel, currentLevelAchievements),
 
-                  // Achievements grid
                   _buildAchievementsSection(),
                 ],
               ),
             ),
 
-            // Home button at bottom
             const Positioned(bottom: 0, left: 0, right: 0, child: HomeButton()),
           ],
         ),
@@ -219,7 +209,6 @@ class _PawChievementViewState extends State<PawChievementView> {
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         children: [
-          // Pet profile image
           Container(
             width: 100,
             height: 100,
@@ -236,7 +225,6 @@ class _PawChievementViewState extends State<PawChievementView> {
 
           const SizedBox(height: 8),
 
-          // Pet name
           Text(
             petData!['name'],
             style: const TextStyle(
@@ -248,7 +236,6 @@ class _PawChievementViewState extends State<PawChievementView> {
 
           const SizedBox(height: 8),
 
-          // Star bar
           Image.asset(
             'assets/images/achievement_star_bar.png',
             width: double.infinity,
@@ -259,10 +246,8 @@ class _PawChievementViewState extends State<PawChievementView> {
     );
   }
 
-  // Helper method to get the correct image widget based on the avatar_url
   Widget _getProfileImage() {
     if (petData!['avatar_url'] == null || petData!['avatar_url'].isEmpty) {
-      // Use default image from assets
       return Image.asset(
         'assets/images/Pet profile pic/default.png',
         fit: BoxFit.cover,
@@ -271,18 +256,14 @@ class _PawChievementViewState extends State<PawChievementView> {
 
     String avatarUrl = petData!['avatar_url'];
 
-    // Check if the path is an asset path or a file path
     if (avatarUrl.startsWith('assets/')) {
-      // It's an asset path
       return Image.asset(avatarUrl, fit: BoxFit.cover);
     } else if (avatarUrl.startsWith('/')) {
-      // It's likely a file path on the device
       return Image.file(
         File(avatarUrl),
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           print("Error loading profile image: $error");
-          // Fallback to default image if file can't be loaded
           return Image.asset(
             'assets/images/Pet profile pic/default.png',
             fit: BoxFit.cover,
@@ -290,13 +271,11 @@ class _PawChievementViewState extends State<PawChievementView> {
         },
       );
     } else {
-      // It might be a network image URL
       return Image.network(
         avatarUrl,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           print("Error loading profile image: $error");
-          // Fallback to default image if URL can't be loaded
           return Image.asset(
             'assets/images/Pet profile pic/default.png',
             fit: BoxFit.cover,
@@ -312,7 +291,6 @@ class _PawChievementViewState extends State<PawChievementView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Paw level text
           Text(
             'Paw Level: $pawLevel',
             style: const TextStyle(
@@ -324,13 +302,11 @@ class _PawChievementViewState extends State<PawChievementView> {
 
           const SizedBox(height: 4),
 
-          // Progress bar
           Stack(
             clipBehavior:
-                Clip.none, // Allow the button to overflow outside the stack
+                Clip.none, 
             alignment: Alignment.centerLeft,
             children: [
-              // Background bar
               Container(
                 height: 15,
                 width: double.infinity,
@@ -341,20 +317,18 @@ class _PawChievementViewState extends State<PawChievementView> {
                 ),
               ),
 
-              // Progress fill
               Container(
                 height: 15,
                 width:
                     MediaQuery.of(context).size.width *
                     (currentLevelAchievements / 10) *
-                    0.9, // 0.9 to account for padding
+                    0.9, 
                 decoration: BoxDecoration(
                   color: const Color(0xFF729996),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
 
-              // Paw icon on slider - positioned outside the bar
               Positioned(
                 left:
                     (MediaQuery.of(context).size.width *
@@ -379,7 +353,6 @@ class _PawChievementViewState extends State<PawChievementView> {
 
           const SizedBox(height: 4),
 
-          // Achievement count text
           Text(
             '$currentLevelAchievements/10',
             style: const TextStyle(
@@ -394,20 +367,17 @@ class _PawChievementViewState extends State<PawChievementView> {
   }
 
   Widget _buildAchievementsSection() {
-    // Calculate start and end indices for current page
     int startIndex = currentPage * 6;
     int endIndex = startIndex + 6;
     if (endIndex > achievements.length) {
       endIndex = achievements.length;
     }
 
-    // Get achievements for current page
     List<Map<String, dynamic>> currentPageAchievements = achievements.sublist(
       startIndex,
       endIndex,
     );
 
-    // Calculate total pages
     int totalPages = (achievements.length / 6).ceil();
 
     return Expanded(
@@ -417,7 +387,7 @@ class _PawChievementViewState extends State<PawChievementView> {
           0,
           20,
           80,
-        ), // Bottom margin for home button
+        ), 
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           color: const Color(0xFFFFFCE7),
@@ -432,7 +402,6 @@ class _PawChievementViewState extends State<PawChievementView> {
         ),
         child: Column(
           children: [
-            // Add Achievement button
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -474,7 +443,6 @@ class _PawChievementViewState extends State<PawChievementView> {
 
             const SizedBox(height: 10),
 
-            // Empty state or Achievements grid
             Expanded(
               child:
                   achievements.isEmpty
@@ -532,12 +500,10 @@ class _PawChievementViewState extends State<PawChievementView> {
                       ),
             ),
 
-            // Pagination controls - only show if there are achievements and multiple pages
             if (achievements.isNotEmpty && totalPages > 1)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Previous page button
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios),
                     onPressed:
@@ -552,7 +518,6 @@ class _PawChievementViewState extends State<PawChievementView> {
                         currentPage > 0 ? const Color(0xFF729996) : Colors.grey,
                   ),
 
-                  // Page indicator
                   Text(
                     '${currentPage + 1}/$totalPages',
                     style: const TextStyle(
@@ -561,7 +526,6 @@ class _PawChievementViewState extends State<PawChievementView> {
                     ),
                   ),
 
-                  // Next page button
                   IconButton(
                     icon: const Icon(Icons.arrow_forward_ios),
                     onPressed:
@@ -586,14 +550,12 @@ class _PawChievementViewState extends State<PawChievementView> {
   }
 
   Widget _buildAchievementBadge(Map<String, dynamic> achievement) {
-    // Parse date from the database
     DateTime? achievementDate = _db.parseDbDate(achievement['date']);
     String formattedDate =
         achievementDate != null
             ? '${achievementDate.month.toString().padLeft(2, '0')}/${achievementDate.day.toString().padLeft(2, '0')}/${achievementDate.year}'
             : 'Unknown date';
 
-    // Determine which badge asset to use based on color
     String badgeAsset;
     switch (achievement['badge_color']) {
       case 'blue':
@@ -614,7 +576,6 @@ class _PawChievementViewState extends State<PawChievementView> {
 
     return GestureDetector(
       onTap: () {
-        // Show achievement details in a dialog
         if (achievement['description'] != null) {
           showDialog(
             context: context,
@@ -635,12 +596,10 @@ class _PawChievementViewState extends State<PawChievementView> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Badge image
           Image.asset(badgeAsset, width: 70, height: 70),
 
           const SizedBox(height: 4),
 
-          // Achievement title with constrained width to prevent overflow
           SizedBox(
             width: 90,
             child: Text(
@@ -656,7 +615,6 @@ class _PawChievementViewState extends State<PawChievementView> {
             ),
           ),
 
-          // Achievement date
           Text(
             formattedDate,
             style: const TextStyle(

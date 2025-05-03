@@ -68,12 +68,9 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
           .getNotificationSettings(_currentUser.id!);
 
       setState(() {
-        // We'll just use 'general' for the main notification toggle
         _notificationsEnabled = notificationSettings['general'] ?? true;
-        // Mark user data as loaded
       });
     } else {
-      // If there's no user ID, set the flag to prevent loading
       setState(() {
       });
     }
@@ -139,16 +136,11 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
 
   @override
   Widget build(BuildContext context) {
-    // Check if we have a valid user with an ID
     if (_currentUser.id == null) {
-      // If there's no user ID, we should redirect to login
-      // But we'll use a delayed action to avoid build-time navigation
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Check if user provider has a valid user
         final userProvider = Provider.of<UserProvider>(context, listen: false);
         if (userProvider.currentUser != null &&
             userProvider.currentUser!.id != null) {
-          // If user provider has a valid user, update our local user
           setState(() {
             _currentUser = userProvider.currentUser!;
             _loadUserSettings();
@@ -178,7 +170,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      // Remove the AppBar completely
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -205,15 +196,12 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Profile Picture and Paw Section
                       _buildProfileSection(),
 
-                      // Edit/Save Buttons - moved to below profile section
                       _buildEditButtons(),
 
                       const SizedBox(height: 20),
 
-                      // User Info Form
                       _buildUserInfoForm(),
 
                       const SizedBox(height: 30),
@@ -264,7 +252,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
                 ),
               ),
 
-              // Home Button - make sure it's at the very bottom
               const Positioned(
                 bottom: 0,
                 left: 0,
@@ -283,10 +270,8 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Avatar section with change button
         Stack(
           children: [
-            // Avatar Circle - made larger
             Container(
               width: 150,
               height: 150,
@@ -341,8 +326,8 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
           padding: const EdgeInsets.only(left: 20),
           child: Image.asset(
             'assets/images/paw.png',
-            width: 120, // Increased from 60 to 120 (80% of 150)
-            height: 120, // Increased from 60 to 120
+            width: 120, 
+            height: 120, 
           ),
         ),
       ],
@@ -353,7 +338,7 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end, // Right alignment
+        mainAxisAlignment: MainAxisAlignment.end, 
         children:
             _isEditing
                 ? [
@@ -390,13 +375,10 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
   Widget _buildUserInfoForm() {
     return Column(
       children: [
-        // Username Field
         _buildDetailRow('Username', _currentUser.name, _usernameController),
 
-        // Email Field
         _buildDetailRow('Email', _currentUser.email, _emailController),
 
-        // Password Fields - show differently based on edit mode
         if (!_isEditing)
           _buildDetailRow('Password', 'xxxxxxxxx', null)
         else
@@ -574,7 +556,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
       _newPasswordController.clear();
       _confirmPasswordController.clear();
 
-      // If we have a new image file but haven't saved, revert to the original
       _loadUserAvatar();
     });
   }
@@ -626,7 +607,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
     // Update user name (if changed)
     if (_usernameController.text != _currentUser.name ||
         _emailController.text != _currentUser.email) {
-      // Email can't be changed to an existing email
       if (_emailController.text != _currentUser.email) {
         bool emailExists = await _authService.checkEmailExists(
           _emailController.text,
@@ -646,13 +626,12 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
         'id': _currentUser.id,
         'name': _usernameController.text,
         'email': _emailController.text,
-        'password': _currentUser.password, // Don't change password here
+        'password': _currentUser.password, 
         'phone': _currentUser.phone,
         'country': _currentUser.country,
         'remember_me': _currentUser.rememberMe ? 1 : 0,
       });
 
-      // Update local user object
       _currentUser = _currentUser.copyWith(
         name: _usernameController.text,
         email: _emailController.text,
@@ -663,7 +642,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
 
     // Save profile picture if changed
     if (_imageFile != null && _currentUser.id != null) {
-      // Save image to app documents directory
       final appDir = await getApplicationDocumentsDirectory();
       final fileName = 'user_${_currentUser.id}_avatar.jpg';
       final savedImage = await _imageFile!.copy('${appDir.path}/$fileName');
@@ -741,7 +719,6 @@ class _PetsonalhubViewState extends State<PetsonalhubView> {
                 if (_currentUser.id != null) {
                   final db = await _dbHandler.database;
 
-                  // Delete user settings first due to foreign key constraint
                   await db.delete(
                     'user_settings',
                     where: 'user_id = ?',

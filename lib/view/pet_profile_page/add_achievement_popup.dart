@@ -22,7 +22,6 @@ class _AddAchievementPopupState extends State<AddAchievementPopup> {
   String _selectedBadgeColor = 'pink'; // Default badge color
   String? _selectedDescription;
 
-  // Define all the achievements by category
   final Map<String, List<AchievementItem>> _achievementsByCategory = {
     '🏆 Basic Milestones': [
       AchievementItem(
@@ -139,7 +138,6 @@ class _AddAchievementPopupState extends State<AddAchievementPopup> {
   void _showDateSelectionPopup() {
     if (_selectedAchievement == null) return;
 
-    // Find the description for the selected achievement
     for (var category in _achievementsByCategory.entries) {
       for (var item in category.value) {
         if (item.name == _selectedAchievement) {
@@ -503,7 +501,6 @@ class _DateSelectionPopupState extends State<DateSelectionPopup> {
             ),
             const SizedBox(height: 16),
 
-            // Description field
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(

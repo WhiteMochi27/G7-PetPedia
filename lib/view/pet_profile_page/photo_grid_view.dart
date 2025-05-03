@@ -26,7 +26,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
 
     if (image != null) {
       try {
-        // Save to database
         DatabaseHandler db = DatabaseHandler();
         final imageData = {
           'album_id': albumId,
@@ -37,23 +36,19 @@ class _PhotoGridViewState extends State<PhotoGridView> {
 
         int imageId = await db.insertImage(imageData);
 
-        // Update UI for the current album
         setState(() {
           currentAlbum.photos.add(
             Photo(id: imageId, date: DateTime.now(), imagePath: image.path),
           );
         });
 
-        // Also update the "All photos" album if we're not already in it
         if (currentAlbum.name != "All photos") {
-          // Find the "All photos" album
           final allPhotosAlbum = widget.albums.firstWhere(
             (album) => album.name == "All photos",
             orElse: () => Album(id: -1, name: "", photos: []),
           );
 
           if (allPhotosAlbum.id != -1) {
-            // Add to "All photos" in the database
             final allPhotosImageData = {
               'album_id': allPhotosAlbum.id,
               'image_url': image.path,
@@ -62,9 +57,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
             };
 
             await db.insertImage(allPhotosImageData);
-
-            // Note: We don't need to update the UI for the "All photos" album
-            // since we're currently in a different album view
           }
         }
       } catch (e) {
@@ -86,7 +78,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
         DatabaseHandler db = DatabaseHandler();
         List<Photo> newPhotos = [];
 
-        // Save each image to database
         for (var image in images) {
           final imageData = {
             'album_id': albumId,
@@ -100,16 +91,13 @@ class _PhotoGridViewState extends State<PhotoGridView> {
             Photo(id: imageId, date: DateTime.now(), imagePath: image.path),
           );
 
-          // Also add to "All photos" album if we're not already in it
           if (currentAlbum.name != "All photos") {
-            // Find the "All photos" album
             final allPhotosAlbum = widget.albums.firstWhere(
               (album) => album.name == "All photos",
               orElse: () => Album(id: -1, name: "", photos: []),
             );
 
             if (allPhotosAlbum.id != -1) {
-              // Add to "All photos" in the database
               final allPhotosImageData = {
                 'album_id': allPhotosAlbum.id,
                 'image_url': image.path,
@@ -119,13 +107,10 @@ class _PhotoGridViewState extends State<PhotoGridView> {
 
               await db.insertImage(allPhotosImageData);
 
-              // Note: We don't need to update the UI for the "All photos" album
-              // since we're currently in a different album view
             }
           }
         }
 
-        // Update UI for the current album
         setState(() {
           currentAlbum.photos.addAll(newPhotos);
         });
@@ -140,7 +125,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
   }
 
   late Album currentAlbum;
-  // Selection mode variables
   bool isSelectionMode = false;
   late List<bool> selectedPhotos;
 
@@ -164,14 +148,12 @@ class _PhotoGridViewState extends State<PhotoGridView> {
         ),
         child: Stack(
           children: [
-            // Header
             const PageTitle(
               icon: 'assets/images/icon_album.png',
               title: 'SnapPaws',
               subtitle: 'Pet Album',
             ),
 
-            // Back button (positioned above the PageTitle)
             Positioned(
               top: 100,
               left: 15,
@@ -186,30 +168,25 @@ class _PhotoGridViewState extends State<PhotoGridView> {
               ),
             ),
 
-            // Content area
             Positioned.fill(
               top: 100,
               child: Column(
                 children: [
-                  // Function buttons at top
                   _buildTopFunctionButtons(),
 
-                  // Main content - photos grid
                   Expanded(child: _buildPhotoGrid()),
                 ],
               ),
             ),
 
-            // Selection mode bottom toolbar
             if (isSelectionMode)
               Positioned(
-                bottom: 80, // Position above the HomeButton
+                bottom: 80, 
                 left: 0,
                 right: 0,
                 child: _buildSelectionToolbar(),
               ),
 
-            // Home button at bottom
             const Positioned(bottom: 0, left: 0, right: 0, child: HomeButton()),
           ],
         ),
@@ -223,7 +200,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          // Camera button
           IconButton(
             icon: Image.asset(
               'assets/images/icon_camera.png',
@@ -238,7 +214,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
             },
           ),
 
-          // Folder button
           IconButton(
             icon: Image.asset(
               'assets/images/icon_folder.png',
@@ -261,7 +236,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Album title
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
@@ -274,7 +248,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
           ),
         ),
 
-        // Photos grid
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -294,13 +267,11 @@ class _PhotoGridViewState extends State<PhotoGridView> {
                     if (isSelectionMode) {
                       setState(() {
                         selectedPhotos[index] = !selectedPhotos[index];
-                        // Exit selection mode if nothing is selected
                         if (!selectedPhotos.contains(true)) {
                           isSelectionMode = false;
                         }
                       });
                     } else {
-                      // View photo in full screen (not implemented in this sample)
                       _showFullScreenImage(
                         currentAlbum.photos[index].imagePath,
                       );
@@ -318,7 +289,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      // Photo
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -337,7 +307,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   errorBuilder: (context, error, stackTrace) {
-                                    // Fallback to placeholder if image loading fails
                                     return Image.asset(
                                       'assets/album/placeholder_image.png',
                                       fit: BoxFit.cover,
@@ -362,7 +331,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
                         ),
                       ),
 
-                      // Selection indicator
                       if (isSelectionMode)
                         Positioned(
                           top: 5,
@@ -440,7 +408,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Delete button
           IconButton(
             icon: Image.asset(
               'assets/images/icon_delete.png',
@@ -452,7 +419,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
             },
           ),
 
-          // Move button
           IconButton(
             icon: Image.asset(
               'assets/images/icon_move.png',
@@ -472,7 +438,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
     DatabaseHandler db = DatabaseHandler();
 
     try {
-      // Get IDs of photos to delete
       List<int> idsToDelete = [];
       for (int i = 0; i < selectedPhotos.length; i++) {
         if (selectedPhotos[i]) {
@@ -480,12 +445,10 @@ class _PhotoGridViewState extends State<PhotoGridView> {
         }
       }
 
-      // Delete from database
       for (int id in idsToDelete) {
         await db.deleteImage(id);
       }
 
-      // Remove from current view
       for (int i = selectedPhotos.length - 1; i >= 0; i--) {
         if (selectedPhotos[i]) {
           currentAlbum.photos.removeAt(i);
@@ -545,7 +508,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
                           shrinkWrap: true,
                           itemCount: widget.albums.length,
                           itemBuilder: (context, index) {
-                            // Skip current album
                             if (widget.albums[index].id == currentAlbum.id) {
                               return Container();
                             }
@@ -613,7 +575,6 @@ class _PhotoGridViewState extends State<PhotoGridView> {
     DatabaseHandler db = DatabaseHandler();
 
     try {
-      // Get IDs of photos to move
       List<int> idsToMove = [];
       List<Photo> photosToMove = [];
       for (int i = 0; i < selectedPhotos.length; i++) {
@@ -623,10 +584,8 @@ class _PhotoGridViewState extends State<PhotoGridView> {
         }
       }
 
-      // Move in database
       await db.movePhotosToAlbum(idsToMove, destinationAlbum.id);
 
-      // Update current view
       destinationAlbum.photos.addAll(photosToMove);
 
       for (int i = selectedPhotos.length - 1; i >= 0; i--) {

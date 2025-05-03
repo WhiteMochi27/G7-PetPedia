@@ -34,17 +34,13 @@ class _AlbumListViewState extends State<AlbumListView> {
       try {
         DatabaseHandler db = DatabaseHandler();
 
-        // Always find the All Photos album first
         final allPhotosIndex = albums.indexWhere(
           (album) => album.name == "All photos",
         );
         if (allPhotosIndex == -1) {
-          // Create All Photos if it doesn't exist
-          // [code to create All Photos album]
-          return; // Return and retry after creation
+          return; 
         }
 
-        // Always save to All Photos album
         final allPhotosId = albums[allPhotosIndex].id;
         final imageData = {
           'album_id': allPhotosId,
@@ -56,15 +52,12 @@ class _AlbumListViewState extends State<AlbumListView> {
         int imageId = await db.insertImage(imageData);
 
         setState(() {
-          // Add to All Photos in UI
           albums[allPhotosIndex].photos.add(
             Photo(id: imageId, date: DateTime.now(), imagePath: image.path),
           );
         });
 
-        // Only add to specific album if it's not All Photos
         if (albumId != allPhotosId) {
-          // Add a reference to the same image in the specific album
           final albumImageData = {
             'album_id': albumId,
             'image_url': image.path,
@@ -75,7 +68,6 @@ class _AlbumListViewState extends State<AlbumListView> {
           await db.insertImage(albumImageData);
 
           setState(() {
-            // Add to specific album in UI
             final albumIndex = albums.indexWhere(
               (album) => album.id == albumId,
             );
@@ -121,7 +113,6 @@ class _AlbumListViewState extends State<AlbumListView> {
             Photo(id: imageId, date: DateTime.now(), imagePath: image.path),
           );
 
-          // Also add to "All photos" album if it exists and we're not already adding to it
           if (allPhotosIndex != -1 && albumId != albums[allPhotosIndex].id) {
             final allPhotosImageData = {
               'album_id': albums[allPhotosIndex].id,
@@ -132,7 +123,6 @@ class _AlbumListViewState extends State<AlbumListView> {
 
             int allPhotosImageId = await db.insertImage(allPhotosImageData);
 
-            // Add directly to the "All photos" album
             albums[allPhotosIndex].photos.add(
               Photo(
                 id: allPhotosImageId,
@@ -143,9 +133,7 @@ class _AlbumListViewState extends State<AlbumListView> {
           }
         }
 
-        // Update UI
         setState(() {
-          // Find the album with the given ID and update it
           final albumIndex = albums.indexWhere((album) => album.id == albumId);
           if (albumIndex != -1) {
             albums[albumIndex].photos.addAll(newPhotos);
@@ -162,32 +150,29 @@ class _AlbumListViewState extends State<AlbumListView> {
 
   Future<void> _loadAlbums() async {
     try {
-      // Get the pet ID (you need to pass this to your view)
       final int petId =
-          widget.petId; // Make sure to add this parameter to your widget
+          widget.petId; 
 
-      // Fetch albums from database
       DatabaseHandler db = DatabaseHandler();
       final albumsData = await db.getAlbumsForPet(petId);
 
       List<Album> loadedAlbums = [];
       for (var albumData in albumsData) {
-        int albumId = albumData['album_id']; // Changed from 'id' to 'album_id'
+        int albumId = albumData['album_id']; 
 
-        // Get photos for each album
         final photosData = await db.getImagesForAlbum(
           albumId,
-        ); // Changed from getPhotosForAlbum
+        );
 
         List<Photo> photos =
             photosData.map((photoData) {
               return Photo(
-                id: photoData['image_id'], // Changed from 'id' to 'image_id'
+                id: photoData['image_id'],
                 date:
                     db.parseDbDate(photoData['date_added']) ??
-                    DateTime.now(), // Changed from 'date' to 'date_added'
+                    DateTime.now(), 
                 imagePath:
-                    photoData['image_url'], // Changed from 'image_path' to 'image_url'
+                    photoData['image_url'], 
               );
             }).toList();
 
@@ -196,9 +181,7 @@ class _AlbumListViewState extends State<AlbumListView> {
         );
       }
 
-      // Make sure 'All photos' album exists or create it
       if (!loadedAlbums.any((album) => album.name == "All photos")) {
-        // Create "All photos" album in database if it doesn't exist
         final allPhotosData = {
           'pet_id': petId,
           'name': 'All photos',
@@ -207,7 +190,6 @@ class _AlbumListViewState extends State<AlbumListView> {
 
         int allPhotosAlbumId = await db.insertAlbum(allPhotosData);
 
-        // Collect all photos
         List<Photo> allPhotos = [];
         for (var album in loadedAlbums) {
           allPhotos.addAll(album.photos);
@@ -249,7 +231,6 @@ class _AlbumListViewState extends State<AlbumListView> {
               subtitle: 'Pet Album',
             ),
 
-            // Back button (positioned above the PageTitle)
             Positioned(
               top: 100,
               left: 15,
@@ -266,16 +247,13 @@ class _AlbumListViewState extends State<AlbumListView> {
               top: 100,
               child: Column(
                 children: [
-                  // Function buttons at top
                   _buildTopFunctionButtons(),
 
-                  // Album grid
                   Expanded(child: _buildAlbumGrid()),
                 ],
               ),
             ),
 
-            // Home button at bottom
             const Positioned(bottom: 0, left: 0, right: 0, child: HomeButton()),
           ],
         ),
@@ -290,7 +268,6 @@ class _AlbumListViewState extends State<AlbumListView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          // Add album button
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
@@ -298,7 +275,6 @@ class _AlbumListViewState extends State<AlbumListView> {
             },
           ),
 
-          // Camera button
           IconButton(
             icon: Image.asset(
               'assets/images/icon_camera.png',
@@ -310,7 +286,6 @@ class _AlbumListViewState extends State<AlbumListView> {
             },
           ),
 
-          // Folder button
           IconButton(
             icon: Image.asset(
               'assets/images/icon_folder.png',
@@ -358,7 +333,6 @@ class _AlbumListViewState extends State<AlbumListView> {
                           PhotoGridView(album: albums[index], albums: albums),
                 ),
               ).then((updatedAlbums) {
-                // Check if we received updated albums back
                 if (updatedAlbums != null) {
                   setState(() {
                     albums = updatedAlbums;
@@ -368,7 +342,6 @@ class _AlbumListViewState extends State<AlbumListView> {
               ;
             },
             onLongPress: () {
-              // Show delete album option
               if (albums[index].name != "All photos") {
                 _showDeleteAlbumDialog(index);
               }
@@ -376,7 +349,6 @@ class _AlbumListViewState extends State<AlbumListView> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Album thumbnail
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
@@ -395,7 +367,6 @@ class _AlbumListViewState extends State<AlbumListView> {
                                   width: double.infinity,
                                   height: double.infinity,
                                   errorBuilder: (context, error, stackTrace) {
-                                    // Show placeholder if image loading fails
                                     return Image.asset(
                                       'assets/album/placeholder_image.png',
                                       fit: BoxFit.cover,
@@ -412,7 +383,6 @@ class _AlbumListViewState extends State<AlbumListView> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // Album name
                 Text(
                   albums[index].name,
                   style: const TextStyle(
@@ -422,7 +392,6 @@ class _AlbumListViewState extends State<AlbumListView> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                // Photos count
                 Text(
                   "${albums[index].photos.length}",
                   style: TextStyle(
@@ -564,7 +533,6 @@ class _AlbumListViewState extends State<AlbumListView> {
                   ),
                 ),
                 onPressed: () async {
-                  // Delete from database
                   DatabaseHandler db = DatabaseHandler();
                   await db.deleteAlbum(albums[albumIndex].id);
                   setState(() {

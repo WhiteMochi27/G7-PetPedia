@@ -29,13 +29,11 @@ class _FursonaViewState extends State<FursonaView> {
   }
 
   Future<void> _loadPets() async {
-    // Get the current logged-in user (assuming you're storing userId somewhere)
-    // You can modify this part based on your authentication implementation
     final currentUser = await _db.getRememberedUser();
     final userId =
         currentUser != null
             ? currentUser['id']
-            : 1; // Default to 1 if no user found
+            : 1; 
 
     final petList = await _db.getAllPetProfiles(userId: userId);
 
@@ -95,25 +93,21 @@ class _FursonaViewState extends State<FursonaView> {
         ),
         child: Stack(
           children: [
-            // Header
             const PageTitle(
               icon: 'assets/images/icon_fursona.png',
               title: 'Fursona',
               subtitle: 'Pet Profile',
             ),
 
-            // Main Content
             Positioned.fill(
               top: 100,
               child: Column(
                 children: [
-                  // Selected Pet Profile
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        // Pet Name (Right-aligned)
                         Text(
                           selectedPet['name'],
                           style: const TextStyle(
@@ -123,11 +117,9 @@ class _FursonaViewState extends State<FursonaView> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        // Pet Image and Info on same row
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Pet Image (Circular)
                             Container(
                               width: screenWidth * 0.4 - 20,
                               height: screenWidth * 0.4 - 20,
@@ -163,12 +155,10 @@ class _FursonaViewState extends State<FursonaView> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            // Pet Info
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  // Species/Breed Container
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 8,
@@ -200,7 +190,6 @@ class _FursonaViewState extends State<FursonaView> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  // Age Container
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 8,
@@ -219,10 +208,8 @@ class _FursonaViewState extends State<FursonaView> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  // Edit and View Buttons
                                   Row(
                                     children: [
-                                      // Edit Button
                                       Expanded(
                                         child: Material(
                                           color: const Color(0xFFFFFCE7),
@@ -259,7 +246,6 @@ class _FursonaViewState extends State<FursonaView> {
                                         ),
                                       ),
                                       const SizedBox(width: 6),
-                                      // View Button
                                       Expanded(
                                         child: Material(
                                           color: const Color(0xFFFFFCE7),
@@ -313,7 +299,6 @@ class _FursonaViewState extends State<FursonaView> {
                   ),
 
                   const SizedBox(height: 20),
-                  // Pet List Container
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -350,7 +335,6 @@ class _FursonaViewState extends State<FursonaView> {
                               ],
                             ),
                           ),
-                          // Scrollable Grid of Pets
                           Expanded(
                             child: GridView.builder(
                               padding: const EdgeInsets.only(
@@ -377,10 +361,9 @@ class _FursonaViewState extends State<FursonaView> {
                                       ),
                                   child: Column(
                                     children: [
-                                      // Pet Image (Circular)
                                       AspectRatio(
                                         aspectRatio:
-                                            1.0, // This forces a perfect square
+                                            1.0, 
                                         child: Container(
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
@@ -417,7 +400,6 @@ class _FursonaViewState extends State<FursonaView> {
                                         ),
                                       ),
                                       const SizedBox(height: 5),
-                                      // Pet Name with Paw Icons
                                       Container(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 8,
@@ -459,7 +441,6 @@ class _FursonaViewState extends State<FursonaView> {
                             ),
                           ),
 
-                          // Pagination Dots (if needed for multiple pages)
                           Container(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             child: Row(
@@ -502,7 +483,6 @@ class _FursonaViewState extends State<FursonaView> {
               ),
             ),
 
-            // Home Button
             const Positioned(bottom: 0, left: 0, right: 0, child: HomeButton()),
           ],
         ),
@@ -522,14 +502,12 @@ class _FursonaViewState extends State<FursonaView> {
         ),
         child: Stack(
           children: [
-            // Header
             const PageTitle(
               icon: 'assets/images/icon_fursona.png',
               title: 'Fursona',
               subtitle: 'Pet Profile',
             ),
 
-            // Empty state content
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -563,7 +541,6 @@ class _FursonaViewState extends State<FursonaView> {
               ),
             ),
 
-            // Home Button
             const Positioned(bottom: 0, left: 0, right: 0, child: HomeButton()),
           ],
         ),
@@ -575,7 +552,7 @@ class _FursonaViewState extends State<FursonaView> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => EditView(pet: pet)),
-    ).then((_) => _loadPets()); // Refresh after returning
+    ).then((_) => _loadPets()); 
   }
 
   void _viewPetDetails(Map<String, dynamic> pet) {
@@ -584,7 +561,7 @@ class _FursonaViewState extends State<FursonaView> {
       MaterialPageRoute(
         builder: (context) => PetDetailsView(petId: pet['pet_id']),
       ),
-    ).then((_) => _loadPets()); // Refresh after returning
+    ).then((_) => _loadPets()); 
   }
 
   void _addNewPet() async {
@@ -595,7 +572,7 @@ class _FursonaViewState extends State<FursonaView> {
 
     if (result != null && mounted) {
       if (result['save'] == true) {
-        _loadPets(); // Reload pets after adding new one
+        _loadPets();
       }
     }
   }

@@ -173,7 +173,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-              // Back button
               Padding(
                 padding: const EdgeInsets.only(top: 100, left: 16),
                 child: Align(
@@ -210,20 +209,17 @@ class _PetDetailsViewState extends State<PetDetailsView> {
         ),
         child: Stack(
           children: [
-            // Header
             const PageTitle(
               icon: 'assets/images/icon_fursona.png',
               title: 'Fursona',
               subtitle: 'Pet Details',
             ),
 
-            // Main Content
             Positioned.fill(
               top: 80,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Pet Profile Picture
                     Container(
                       width: screenWidth * 0.5,
                       height: screenWidth * 0.5,
@@ -258,7 +254,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Pet Name and Species
                     Text(
                       pet!['name'],
                       style: const TextStyle(
@@ -285,7 +280,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                       ),
                     const SizedBox(height: 10),
 
-                    // Action Buttons Grid
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: GridView.count(
@@ -325,7 +319,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
                     ),
                     const SizedBox(height: 30),
 
-                    // Remove Pet Button
                     GestureDetector(
                       onTapDown: (_) => setState(() => _isRemovePressed = true),
                       onTapUp: (_) => setState(() => _isRemovePressed = false),
@@ -367,7 +360,6 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               ),
             ),
 
-            // Back button
             Padding(
               padding: const EdgeInsets.only(top: 100, left: 16),
               child: Align(
@@ -379,95 +371,10 @@ class _PetDetailsViewState extends State<PetDetailsView> {
               ),
             ),
 
-            // Home Button
             const Positioned(bottom: 0, left: 0, right: 0, child: HomeButton()),
           ],
         ),
       ),
     );
   }
-
-  // Widget _buildActionButton(String label, String imagePath) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       if (label == 'Pet Details') {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => EditView(pet: pet)),
-  //         );
-  //       }
-  //       if (label == 'Pet Album') {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => AlbumListView()),
-  //         );
-  //       }
-  //       if (label == 'Fitness Status') {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => WoofnwalkView()),
-  //         );
-  //       }
-  //       if (label == 'Pet Achievements') {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => PawChievementView()),
-  //         );
-  //       }
-  //       // if (label == 'Health Status') {
-  //       //   Navigator.push(
-  //       //     context,
-  //       //     MaterialPageRoute(builder: (context) => FurllergicView()),
-  //       //   );
-  //       // }
-  //       if (label == 'Pet Appointment') {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => PawtectionView()),
-  //         );
-  //       }
-  //     },
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Image.asset(imagePath, width: 80, height: 80),
-  //         const SizedBox(height: 8),
-  //         Text(
-  //           label,
-  //           textAlign: TextAlign.center,
-  //           style: const TextStyle(fontFamily: 'Baloo', fontSize: 12),
-  //           maxLines: 2,
-  //           overflow: TextOverflow.ellipsis,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // void _showRemoveConfirmation(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder:
-  //         (context) => AlertDialog(
-  //           title: const Text('Remove Pet'),
-  //           content: const Text('Are you sure you want to remove this pet?'),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               child: const Text('Cancel'),
-  //             ),
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.pop(context);
-  //                 Navigator.pop(context);
-  //               },
-  //               child: const Text(
-  //                 'Remove',
-  //                 style: TextStyle(color: Colors.red),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //   );
-  // }
 }

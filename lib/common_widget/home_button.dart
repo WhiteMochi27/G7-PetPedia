@@ -15,9 +15,9 @@ class _HomeButtonState extends State<HomeButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity, // Takes full width
+      width: double.infinity,
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque, // Makes entire area tappable
+        behavior: HitTestBehavior.opaque, 
         onTapDown: (_) => setState(() => _isPressed = true),
         onTapUp: (_) => setState(() => _isPressed = false),
         onTapCancel: () => setState(() => _isPressed = false),
@@ -28,9 +28,9 @@ class _HomeButtonState extends State<HomeButton> {
           _isPressed
               ? 'assets/images/home_click.png'
               : 'assets/images/home.png',
-          width: double.infinity, // Full width
-          height: 60, // Fixed height
-          fit: BoxFit.fill, // Stretch to fill width
+          width: double.infinity, 
+          height: 60, 
+          fit: BoxFit.fill, 
         ),
       ),
     );

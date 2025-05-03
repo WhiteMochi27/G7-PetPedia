@@ -70,7 +70,6 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo with proper bottom-to-top fade in
             Container(
               width: screenWidth * 0.85,
               height: screenHeight * 0.4,
@@ -83,7 +82,6 @@ class _SplashScreenState extends State<SplashScreen>
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [Colors.white, Colors.transparent],
-                        // Adjust these stops to control the fade effect
                         stops: [
                           _logoRevealAnimation.value - 0.3,
                           _logoRevealAnimation.value,
@@ -100,7 +98,6 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
             const SizedBox(height: 30),
-            // Subtitle with delayed animation
             AnimatedBuilder(
               animation: _subtitleAnimation,
               builder: (context, child) {

@@ -17,13 +17,11 @@ class AddPetView extends StatefulWidget {
 class _AddPetViewState extends State<AddPetView> {
   final DatabaseHandler _db = DatabaseHandler();
 
-  // Form controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _breedController = TextEditingController();
   final TextEditingController _speciesController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
 
-  // Form values
   String _gender = 'male';
   bool _isNeutered = false;
   DateTime _dateOfBirth = DateTime.now();
@@ -55,7 +53,6 @@ class _AddPetViewState extends State<AddPetView> {
         });
       }
     } catch (e) {
-      // Handle any errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error picking image: $e')),
       );
@@ -149,8 +146,6 @@ class _AddPetViewState extends State<AddPetView> {
 
     // Handle avatar image path
     if (_profileImage != null) {
-      // In a real app, you'd handle file storage differently
-      // For this implementation, we're mocking behavior
       petData['avatar_url'] = _profileImage!.path;
     } else {
       petData['avatar_url'] = 'assets/images/Pet profile pic/default.png';
@@ -158,7 +153,6 @@ class _AddPetViewState extends State<AddPetView> {
 
     // Save to database
     final petId = await _db.insertPetProfile(petData);
-
     // Return pet info to previous screen
     if (mounted) {
       // Create pet object for UI display
@@ -267,12 +261,10 @@ class _AddPetViewState extends State<AddPetView> {
 
                     const SizedBox(height: 20),
 
-                    // Form Fields
                     _buildFormField('Name', _nameController),
                     _buildFormField('Breed', _breedController),
                     _buildFormField('Species', _speciesController),
 
-                    // Gender Toggle
                     _buildLabelText('Gender'),
                     Container(
                       margin: const EdgeInsets.only(bottom: 16),
@@ -353,7 +345,6 @@ class _AddPetViewState extends State<AddPetView> {
                       ),
                     ),
 
-                    // Weight with Unit Selection
                     _buildLabelText('Weight'),
                     Container(
                       margin: const EdgeInsets.only(bottom: 16),
@@ -392,7 +383,6 @@ class _AddPetViewState extends State<AddPetView> {
                       ),
                     ),
 
-                    // Date of Birth Picker
                     _buildLabelText('Date of Birth'),
                     GestureDetector(
                       onTap: () => _selectDate(context),
@@ -422,7 +412,6 @@ class _AddPetViewState extends State<AddPetView> {
                       ),
                     ),
 
-                    // Save Button
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24),
@@ -455,7 +444,6 @@ class _AddPetViewState extends State<AddPetView> {
               ),
             ),
 
-            // Back Button
             Positioned(
               top: 100,
               left: 20,
@@ -469,7 +457,6 @@ class _AddPetViewState extends State<AddPetView> {
               ),
             ),
 
-            // Home Button
             const Positioned(bottom: 0, left: 0, right: 0, child: HomeButton()),
           ],
         ),

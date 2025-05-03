@@ -69,7 +69,7 @@ class _EditViewState extends State<EditView> {
       Map<String, double> loadedCharacteristics = {};
       for (var char in characteristicsList) {
         final percentage = char['percentage'];
-        double percentageValue = 0.5; // Default value
+        double percentageValue = 0.5; 
 
         if (percentage is double) {
           percentageValue = percentage;
@@ -100,7 +100,6 @@ class _EditViewState extends State<EditView> {
     }
   }
 
-  // Method to pick image from camera or gallery
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(source: source);
@@ -119,9 +118,8 @@ class _EditViewState extends State<EditView> {
     }
   }
 
-  // Show modal bottom sheet to select image source
   void _showImageSourceSelector() {
-    if (!_isEditing) return; // Only allow if in editing mode
+    if (!_isEditing) return; 
 
     showModalBottomSheet(
       context: context,
@@ -167,11 +165,9 @@ class _EditViewState extends State<EditView> {
         child: SafeArea(
           child: Stack(
             children: [
-              // Main Content Column
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. Header (Page Title)
                   const Padding(
                     padding: EdgeInsets.only(left: 16.0, top: 10),
                     child: PageTitle(
@@ -181,7 +177,6 @@ class _EditViewState extends State<EditView> {
                     ),
                   ),
 
-                  // 2. Navigation Row (Back and Edit buttons)
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16.0,
@@ -196,7 +191,6 @@ class _EditViewState extends State<EditView> {
                           onPressed: () => Navigator.pop(context),
                         ),
 
-                        // Edit/Save/Cancel Buttons
                         _isEditing
                             ? Row(
                               children: [
@@ -227,7 +221,6 @@ class _EditViewState extends State<EditView> {
                     ),
                   ),
 
-                  // 3. Main Content (Scrollable)
                   Expanded(
                     child:
                         _isLoading
@@ -238,11 +231,9 @@ class _EditViewState extends State<EditView> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Profile Picture
                                     _buildProfilePictureSection(),
                                     const SizedBox(height: 20),
 
-                                    // Details Sections
                                     _buildDetailRow(
                                       'Name',
                                       _editedPet['name'],
@@ -260,16 +251,12 @@ class _EditViewState extends State<EditView> {
                                     ),
                                     _buildGenderRow(),
 
-                                    // Neutered Toggle
                                     _buildNeuteredRow(),
 
-                                    // Weight Section
                                     _buildWeightRow(),
 
-                                    // Date of Birth
                                     _buildDateRow(),
 
-                                    // Characteristics Sliders
                                     _buildCharacteristicsSection(),
 
                                     const SizedBox(height: 20),
@@ -281,7 +268,6 @@ class _EditViewState extends State<EditView> {
                 ],
               ),
 
-              // Home Button
               const Positioned(
                 bottom: 0,
                 left: 0,
@@ -818,12 +804,10 @@ class _EditViewState extends State<EditView> {
     setState(() {
       _isEditing = false;
       _editedPet = Map.from(widget.pet);
-      _imageFile = null; // Reset image if canceling
+      _imageFile = null; 
 
-      // Reset neutered status
       _neutered = widget.pet['neutered'] == 'Yes';
 
-      // Reset date of birth
       if (widget.pet['dob'] != null) {
         DateTime? parsedDate = _db.parseDbDate(widget.pet['dob']);
         if (parsedDate != null) {
@@ -831,7 +815,6 @@ class _EditViewState extends State<EditView> {
         }
       }
 
-      // Reset weight
       if (widget.pet['weight'] != null) {
         _weight =
             widget.pet['weight'] is double
@@ -839,7 +822,6 @@ class _EditViewState extends State<EditView> {
                 : double.tryParse(widget.pet['weight'].toString()) ?? _weight;
       }
 
-      // Reload characteristics
       _loadCharacteristics();
     });
   }
@@ -850,7 +832,6 @@ class _EditViewState extends State<EditView> {
     });
 
     try {
-      // Create a map with updated pet data
       Map<String, dynamic> updatedPet = {
         'name': _editedPet['name'],
         'breed': _editedPet['breed'] ?? '',
@@ -861,9 +842,7 @@ class _EditViewState extends State<EditView> {
         'dob': _db.formatDateForDb(_selectedDate),
       };
 
-      // Handle image path
       if (_imageFile != null) {
-        // Store the file path
         updatedPet['avatar_url'] = _imageFile!.path;
       } else if (_editedPet['avatar_url'] != null) {
         updatedPet['avatar_url'] = _editedPet['avatar_url'];
@@ -871,21 +850,16 @@ class _EditViewState extends State<EditView> {
         updatedPet['avatar_url'] = _editedPet['imagePath'];
       }
 
-      // Get the pet ID
       final petId = widget.pet['pet_id'];
 
-      // Update the pet profile in the database
       await _db.updatePetProfile(updatedPet, petId);
 
-      // Update characteristics in the database
       await _updateCharacteristics(petId);
 
-      // Set editing state to false
       setState(() {
         _isEditing = false;
       });
 
-      // Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Pet profile updated successfully!')),
@@ -908,29 +882,24 @@ class _EditViewState extends State<EditView> {
 
   Future<void> _updateCharacteristics(int petId) async {
     try {
-      // Get existing characteristics
       final existingCharacteristics = await _db.getCharacteristicsForPet(petId);
 
-      // For each characteristic in the map
       for (final entry in _characteristics.entries) {
         final charName = entry.key;
         final percentage = entry.value;
 
-        // Check if this characteristic already exists
         final existingChar = existingCharacteristics.firstWhere(
           (char) => char['name'] == charName,
           orElse: () => {},
         );
 
         if (existingChar.isNotEmpty) {
-          // Update existing characteristic
           await _db.updateCharacteristic({
             'name': charName,
             'percentage': percentage,
             'pet_id': petId,
           }, existingChar['char_id']);
         } else {
-          // Insert new characteristic
           await _db.insertCharacteristic({
             'name': charName,
             'percentage': percentage,
@@ -939,7 +908,6 @@ class _EditViewState extends State<EditView> {
         }
       }
 
-      // Find characteristics to delete (in existing but not in current list)
       final currentCharNames = _characteristics.keys.toSet();
       for (final char in existingCharacteristics) {
         if (!currentCharNames.contains(char['name'])) {
@@ -948,7 +916,6 @@ class _EditViewState extends State<EditView> {
       }
     } catch (e) {
       print('Error updating characteristics: $e');
-      // Error is handled in the calling method
       rethrow;
     }
   }
@@ -965,17 +932,14 @@ class _EditViewState extends State<EditView> {
           selectedCharacteristics: _characteristics.keys.toList(),
           petId: widget.pet['pet_id'],
           onSave: (selectedCharacteristics) {
-            // Create a new map with existing values for selected characteristics
             Map<String, double> updatedCharacteristics = {};
 
-            // Keep existing values for characteristics that were already selected
             for (final key in _characteristics.keys) {
               if (selectedCharacteristics.contains(key)) {
                 updatedCharacteristics[key] = _characteristics[key]!;
               }
             }
 
-            // Add new characteristics with default value of 0.5
             for (final name in selectedCharacteristics) {
               if (!_characteristics.containsKey(name)) {
                 updatedCharacteristics[name] = 0.5;

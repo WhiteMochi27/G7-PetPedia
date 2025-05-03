@@ -6,7 +6,7 @@ import 'package:petpedia/database/database_handler.dart';
 class PetCharacteristicsPopup extends StatefulWidget {
   final List<String> selectedCharacteristics;
   final Function(List<String>) onSave;
-  final int? petId; // Added parameter to receive pet ID
+  final int? petId;
   
   const PetCharacteristicsPopup({
     Key? key,
@@ -26,7 +26,6 @@ class _PetCharacteristicsPopupState extends State<PetCharacteristicsPopup> {
   bool _isLoading = false;
   final DatabaseHandler _db = DatabaseHandler();
 
-  // Define all the characteristics by category
   final Map<String, List<CharacteristicItem>> _characteristicsByCategory = {
     '🐾 Personality & Temperament': [
       CharacteristicItem(
@@ -194,13 +193,11 @@ class _PetCharacteristicsPopupState extends State<PetCharacteristicsPopup> {
     super.initState();
     _selectedCharacteristics = List.from(widget.selectedCharacteristics);
     
-    // If petId is provided, load characteristics from the database
     if (widget.petId != null) {
       _loadCharacteristicsFromDb();
     }
   }
 
-  // New method to load characteristics from database
   Future<void> _loadCharacteristicsFromDb() async {
     if (widget.petId == null) return;
     
@@ -218,7 +215,6 @@ class _PetCharacteristicsPopupState extends State<PetCharacteristicsPopup> {
       });
     } catch (e) {
       print('Error loading characteristics: $e');
-      // Optionally show a snackbar or other UI notification
     } finally {
       setState(() {
         _isLoading = false;
@@ -226,7 +222,6 @@ class _PetCharacteristicsPopupState extends State<PetCharacteristicsPopup> {
     }
   }
 
-  // New method to save characteristics to database
   Future<void> _saveCharacteristicsToDb() async {
     if (widget.petId == null) return;
     
@@ -256,7 +251,6 @@ class _PetCharacteristicsPopupState extends State<PetCharacteristicsPopup> {
       }
     } catch (e) {
       print('Error saving characteristics: $e');
-      // Handle error as needed
     }
   }
 
@@ -378,12 +372,10 @@ class _PetCharacteristicsPopupState extends State<PetCharacteristicsPopup> {
                   const SizedBox(width: 40),
                   ElevatedButton(
                     onPressed: () async {
-                      // Handle database operations if petId is available
                       if (widget.petId != null) {
                         await _saveCharacteristicsToDb();
                       }
                       
-                      // Call the onSave callback from parent
                       widget.onSave(_selectedCharacteristics);
                       Navigator.of(context).pop();
                     },
